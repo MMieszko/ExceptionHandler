@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace ExceptionHandler
 {
-    public class ExceptionHandler : ExceptionHandlerBase
+    public class Handler
     {
         private readonly RequestDelegate _next;
 
-        public ExceptionHandler(RequestDelegate next)
-            : base(next)
+        public Handler(RequestDelegate next)
         {
             _next = next;
         }
@@ -26,7 +25,7 @@ namespace ExceptionHandler
             }
         }
 
-        protected override Task<string> WriteResponseAsync(Exception exception)
+        protected Task<string> WriteResponseAsync(Exception exception)
         {
             throw new NotImplementedException();
         }

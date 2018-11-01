@@ -12,46 +12,36 @@ namespace ExceptionHandler
     {
         public void Configure(IApplicationBuilder app)
         {
-            app.UseExceptionHandler().Handle<BadImageFormatException>().AndDo(exception => Task.FromResult("Ship happens"))
-                                     .Handle<SystemException>().AndDo(exception => "Ship happens")
-                                     .Handle<InvalidCastException>().AndCall(() => new InvalidCastExceptionHandler())
-                                     .Handle<DivideByZeroException>().AndCall<DivideByZeroExceptionHandler>()
-                                     .Handle<IndexOutOfRangeException>().AndWriteResponse(HttpStatusCode.Accepted, string.Empty);
+            app.UseExceptionHandler().Catch<BadImageFormatException>().AndReturnAsync(exception => Task.FromResult(new Response(HttpStatusCode.Accepted, "Omg")))
+                                     .Catch<InvalidCastException>().AndCall(() => new InvalidCastExceptionHandler())
+                                     .Catch<IndexOutOfRangeException>().AndWriteResponseAsync(HttpStatusCode.Accepted, Response.Empty(HttpStatusCode.Accepted))
+                                     .ForUnspecifiedUse<DefaultExceptionHandler>();
 
-            app.UseExceptionHandler().CatchAny().AndWriteResponse(HttpStatusCode.Conflict);
-            app.UseExceptionHandler().CatchAny().AndWriteResponse(HttpStatusCode.OK, "Its always ok :)");
 
-            app.UseExceptionHandler<MyExceptionHandler>();
-
+            app.UseExceptionHandler().CatchAny().AndWriteResponse(Response.Empty(HttpStatusCode.Accepted));
+            app.UseExceptionHandler().CatchAny().AndWriteResponse(new Response(HttpStatusCode.OK, "Its always ok :)"));
+            app.UseExceptionHandler().CatchAny().AndWriteResponse(exception => new Response(HttpStatusCode.Conflict, $"failed with {exception.Message}"));
+            app.UseExceptionHandler().CatchAny().AndWriteResponse((ctx, exception) => new Response(HttpStatusCode.Conflict, $"{ctx.Request.Path} failed with {exception.Message}"));
         }
     }
 
-    public class MyExceptionHandler : ExceptionHandlerBase
+    public class InvalidCastExceptionHandler : IHandler<InvalidCastException>
     {
-        public MyExceptionHandler(RequestDelegate next) 
-            : base(next)
+        public async Task<string> HandleAsync(HttpContext context, InvalidCastException exception)
         {
-        }
-        
-        protected override Task<string> WriteResponseAsync(Exception exception)
-        {
-            return Task.FromResult("Pizda nad glowa");
+            var requestBody = await context.ReadRequestBodyAsync();
+
+            return $"{context.Request.Path} failed with {exception.GetType().FullName} while sening {requestBody}";
         }
     }
 
-    public class InvalidCastExceptionHandler : IExceptionHandler<Exception>
+    public class DefaultExceptionHandler : IHandler<Exception>
     {
-        public Task<string> HandleAsync(Exception exception)
+        public async Task<string> HandleAsync(HttpContext context, Exception exception)
         {
-            throw new NotImplementedException();
-        }
-    }
+            var requestBody = await context.ReadRequestBodyAsync();
 
-    public class DivideByZeroExceptionHandler : IExceptionHandler<DivideByZeroException>
-    {
-        public Task<string> HandleAsync(DivideByZeroException exception)
-        {
-            throw new NotImplementedException();
+            return $"{context.Request.Path} failed with {exception.GetType().FullName} while sening {requestBody}";
         }
     }
 }
