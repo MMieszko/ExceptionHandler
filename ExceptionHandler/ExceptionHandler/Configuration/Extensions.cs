@@ -25,13 +25,13 @@ namespace ExceptionHandler.Configuration
             return @this;
         }
 
-        public static ISpecificExceptionCallback<TException> Catch<TException>(this IApplicationBuilder @this)
+        public static ISpecificExceptionHnandler<TException> Handle<TException>(this IApplicationBuilder @this)
             where TException : Exception
         {
             return null;
         }
 
-        public static IGeneralExceptionCallback CatchAny(this IApplicationBuilder @this)
+        public static IGeneralExceptionHandler CatchAny(this IApplicationBuilder @this)
         {
             return null;
         }
@@ -39,10 +39,11 @@ namespace ExceptionHandler.Configuration
     }
 
 
-    public interface ISpecificExceptionCallback<out TException>
+    public interface ISpecificExceptionHnandler<out TException>
         where TException : Exception
     {
         IApplicationBuilder AndDo(Func<TException, Task<string>> action);
+        IApplicationBuilder AndDo(Func<TException, string> action);
         IApplicationBuilder AndCall(Func<IExceptionHandler<TException>> exceptionCreator);
         IApplicationBuilder AndCall<THandler>(IExceptionHandler<TException> exceptionHandler);
         IApplicationBuilder AndCall<THandler>();
@@ -51,15 +52,10 @@ namespace ExceptionHandler.Configuration
         IApplicationBuilder AndWriteResponse(HttpStatusCode statusCode, string message);
     }
 
-    public interface IGeneralExceptionCallback
+    public interface IGeneralExceptionHandler
     {
         IApplicationBuilder AndWriteResponse(HttpStatusCode statusCode);
         IApplicationBuilder AndWriteResponse(HttpStatusCode statusCode, string message);
+        IApplicationBuilder AndWriteResponse(Func<HttpStatusCode, string> func);
     }
-
-    public interface IResponseWriter
-    {
-        Task<string> WriteAsync();
-    }
-
 }

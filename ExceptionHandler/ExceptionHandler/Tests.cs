@@ -12,14 +12,14 @@ namespace ExceptionHandler
     {
         public void Configure(IApplicationBuilder app)
         {
-            app.UseExceptionHandler().Catch<Exception>().AndDo((exception) => Task.FromResult("Ship happens"))
-                                     .Catch<InvalidCastException>().AndCall(() => new InvalidCastExceptionHandler())
-                                     .Catch<DivideByZeroException>().AndCall<DivideByZeroExceptionHandler>()
-                                     .Catch<IndexOutOfRangeException>().AndWriteResponse(HttpStatusCode.Accepted, string.Empty);
+            app.UseExceptionHandler().Handle<BadImageFormatException>().AndDo(exception => Task.FromResult("Ship happens"))
+                                     .Handle<SystemException>().AndDo(exception => "Ship happens")
+                                     .Handle<InvalidCastException>().AndCall(() => new InvalidCastExceptionHandler())
+                                     .Handle<DivideByZeroException>().AndCall<DivideByZeroExceptionHandler>()
+                                     .Handle<IndexOutOfRangeException>().AndWriteResponse(HttpStatusCode.Accepted, string.Empty);
 
             app.UseExceptionHandler().CatchAny().AndWriteResponse(HttpStatusCode.Conflict);
             app.UseExceptionHandler().CatchAny().AndWriteResponse(HttpStatusCode.OK, "Its always ok :)");
-
 
             app.UseExceptionHandler<MyExceptionHandler>();
 
