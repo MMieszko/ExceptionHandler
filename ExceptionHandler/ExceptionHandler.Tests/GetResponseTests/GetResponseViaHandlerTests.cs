@@ -1,13 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using ExceptionHandler.Abstractions;
 using ExceptionHandler.Configuration;
 using ExceptionHandler.Tests.GetResponseTests;
 using FluentAssertions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Builder.Internal;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 

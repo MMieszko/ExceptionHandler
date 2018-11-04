@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using ExceptionHandler.Abstractions;
 using Microsoft.AspNetCore.Http;
@@ -30,12 +31,10 @@ namespace ExceptionHandler
             where TException : Exception
         {
             if (!Dictionary.ContainsKey(exception.GetType()))
-            {
-                //TODO: Handle global
-            }
+                return new Response(HttpStatusCode.InternalServerError, exception.Message);
 
             var @delegate = Dictionary[exception.GetType()];
-
+            
             switch (@delegate.Method.ReturnType)
             {
                 case Type type when type == typeof(IHandler<TException>):
