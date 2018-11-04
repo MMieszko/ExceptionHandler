@@ -20,7 +20,7 @@ namespace ExceptionHandler.Tests
             const string message = nameof(CanGetResponseViaHandlerCreatedByReflection);
             const HttpStatusCode statusCode = HttpStatusCode.Ambiguous;
 
-            ApplicationBuilder.UseExceptionMiddleware().Catch<InvalidOperationException>().AndReturnAsync((context, exception) => Task.FromResult(new Response(statusCode, message)));
+            ApplicationBuilder.UseExceptionMiddleware().Catch<InvalidOperationException>().AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(statusCode, message)));
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new InvalidOperationException(message), null);
 

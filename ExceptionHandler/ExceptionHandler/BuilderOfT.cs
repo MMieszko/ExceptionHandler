@@ -17,7 +17,7 @@ namespace ExceptionHandler
             _applicationBuilder = applicationBuilder;
         }
 
-        public IApplicationBuilder AndReturnAsync(Func<HttpContext, TException, Task<Response>> responseWriter)
+        public IApplicationBuilder AndReturnAsync(Func<HttpContext, TException, IServiceProvider, Task<Response>> responseWriter)
         {
             Container.Add<TException>(responseWriter);
 

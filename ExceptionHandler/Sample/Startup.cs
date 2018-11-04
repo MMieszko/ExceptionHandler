@@ -44,7 +44,7 @@ namespace Sample
             }
 
             app.UseExceptionMiddleware().Catch<InvalidAsynchronousStateException>()
-                                        .AndReturnAsync((context, exception) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
+                                        .AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
                                    
                                         .Catch<FileNotFoundException>()
                                         .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")

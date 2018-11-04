@@ -41,7 +41,7 @@ namespace ExceptionHandler
                 case Type type when type == typeof(IHandler<TException>):
                     return await ((IHandler<TException>)@delegate.DynamicInvoke()).HandleAsync(httpContext, exception, serviceProvider);
                 case Type type when type == typeof(Task<Response>):
-                    return await (Task<Response>)@delegate.DynamicInvoke(httpContext, exception);
+                    return await (Task<Response>)@delegate.DynamicInvoke(httpContext, exception, serviceProvider);
                 case Type type when type == typeof(Response):
                     return (Response)@delegate.DynamicInvoke();
             }

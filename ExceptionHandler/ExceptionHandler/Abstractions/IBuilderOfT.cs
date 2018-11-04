@@ -12,7 +12,7 @@ namespace ExceptionHandler.Abstractions
     public interface IBuilder<out TException>
         where TException : Exception
     {
-        IApplicationBuilder AndReturnAsync(Func<HttpContext, TException, Task<Response>> responseWriter);
+        IApplicationBuilder AndReturnAsync(Func<HttpContext, TException, IServiceProvider, Task<Response>> responseWriter);
         IApplicationBuilder AndReturnAsync(HttpStatusCode statusCode, string message);
         IApplicationBuilder AndReturnAsync(HttpStatusCode statusCode);
 
