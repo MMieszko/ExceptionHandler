@@ -12,9 +12,9 @@ namespace ExceptionHandler.Configuration
 {
     public static class BuilderExtensions
     {
-        public static IApplicationBuilder UseExceptionHandler(this IApplicationBuilder @this)
+        public static IApplicationBuilder RegisterExceptionHandler(this IApplicationBuilder @this)
         {
-            @this.UseMiddleware<Handler>();
+            @this.UseMiddleware<Middleware>();
 
             return @this;
         }
@@ -22,30 +22,7 @@ namespace ExceptionHandler.Configuration
         public static IBuilder<TException> Catch<TException>(this IApplicationBuilder @this)
             where TException : Exception
         {
-            return null;
-        }
-
-        public static IBuilder CatchAny(this IApplicationBuilder @this)
-        {
-            return null;
-        }
-
-        public static IApplicationBuilder ForUnspecifiedUse<THandler>(this IApplicationBuilder @this)
-            where THandler : IHandler
-        {
-            return null;
-        }
-
-        public static IApplicationBuilder ForUnspecifiedUse<THandler>(this IApplicationBuilder @this, THandler handler)
-            where THandler : IHandler
-        {
-            return null;
-        }
-
-        public static IApplicationBuilder ForUnspecifiedUse<THandler>(this IApplicationBuilder @this, Func<THandler> handlerCreator)
-            where THandler : IHandler
-        {
-            return null;
+            return new Builder<TException>(@this);
         }
     }
 }

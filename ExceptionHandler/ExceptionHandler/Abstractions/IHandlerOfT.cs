@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace ExceptionHandler.Abstractions
 {
-    public interface IHandler<in TException> : IHandler
-        where TException : Exception
+    public interface IHandler<in TException>
     {
-        Task<string> HandleAsync(HttpContext context, TException exception);
+        Task<Response> HandleAsync(HttpContext context, TException exception);
     }
 }
