@@ -9,7 +9,7 @@ namespace Sample.ExceptionHandlers
 {
     public class DefaultExceptionHandler : IHandler<Exception>
     {
-        public Task<Response> HandleAsync(HttpContext context, Exception exception)
+        public Task<Response> HandleAsync(HttpContext context, Exception exception, IServiceProvider serviceProvider)
         {
             return Task.FromResult(new Response(HttpStatusCode.Conflict, exception.Message));
         }

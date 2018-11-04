@@ -26,7 +26,7 @@ namespace ExceptionHandler
             Dictionary.Add(typeof(TException), @delegate);
         }
 
-        public static async Task<Response> GetResponseAsync<TException>(HttpContext httpContext, TException exception)
+        public static async Task<Response> GetResponseAsync<TException>(HttpContext httpContext, TException exception, IServiceProvider serviceProvider)
             where TException : Exception
         {
             if (!Dictionary.ContainsKey(exception.GetType()))
@@ -39,7 +39,7 @@ namespace ExceptionHandler
             switch (@delegate.Method.ReturnType)
             {
                 case Type type when type == typeof(IHandler<TException>):
-                    return await ((IHandler<TException>)@delegate.DynamicInvoke()).HandleAsync(httpContext, exception);
+                    return await ((IHandler<TException>)@delegate.DynamicInvoke()).HandleAsync(httpContext, exception, serviceProvider);
                 case Type type when type == typeof(Task<Response>):
                     return await (Task<Response>)@delegate.DynamicInvoke(httpContext, exception);
                 case Type type when type == typeof(Response):

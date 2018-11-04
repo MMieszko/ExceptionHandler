@@ -22,7 +22,7 @@ namespace ExceptionHandler.Tests
 
             ApplicationBuilder.UseExceptionMiddleware().Catch<InvalidOperationException>().AndReturnAsync((context, exception) => Task.FromResult(new Response(statusCode, message)));
 
-            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new InvalidOperationException(message));
+            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new InvalidOperationException(message), null);
 
             result.StatusCode.Should().BeEquivalentTo(statusCode);
             result.Message.Should().BeEquivalentTo(message);

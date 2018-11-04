@@ -4,14 +4,19 @@ using System.Threading.Tasks;
 using ExceptionHandler;
 using ExceptionHandler.Abstractions;
 using Microsoft.AspNetCore.Http;
+using Sample.Services;
 
 namespace Sample.ExceptionHandlers
 {
     public class IndexOutOfRangeExceptionHandler : IHandler<IndexOutOfRangeException>
     {
-        public Task<Response> HandleAsync(HttpContext context, IndexOutOfRangeException exception)
+        public async Task<Response> HandleAsync(HttpContext context, IndexOutOfRangeException exception, IServiceProvider serviceProvider)
         {
-            return Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"{context.Request.Path} failed with {exception.GetType().FullName}. Catched by {nameof(IndexOutOfRangeExceptionHandler)}"));
+            var message = $"{context.Request.Path} failed with {exception.GetType().FullName}. Catched by {nameof(IndexOutOfRangeExceptionHandler)}";
+
+            await ((LoggerService) serviceProvider.GetService(typeof(LoggerService))).LogAsync(message);
+
+            return new Response(HttpStatusCode.AlreadyReported, message);
         }
     }
 }

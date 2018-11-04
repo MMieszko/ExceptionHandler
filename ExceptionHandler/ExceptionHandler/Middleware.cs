@@ -8,16 +8,18 @@ namespace ExceptionHandler
     {
         protected HttpContext HttpContext;
         protected readonly RequestDelegate Next;
+        protected IServiceProvider ServiceProvider;
 
         public Middleware(RequestDelegate next)
         {
             Next = next;
         }
 
-        public virtual async Task Invoke(HttpContext context)
+        public virtual async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
         {
             try
             {
+                this.ServiceProvider = serviceProvider;
                 this.HttpContext = context;
                 await Next(context);
             }
@@ -35,7 +37,7 @@ namespace ExceptionHandler
 
         protected virtual async Task<Response> GetResponse(Exception ex)
         {
-            return await Container.GetResponseAsync(HttpContext, (dynamic)ex);
+            return await Container.GetResponseAsync(HttpContext, (dynamic)ex, ServiceProvider);
         }
     }
 }

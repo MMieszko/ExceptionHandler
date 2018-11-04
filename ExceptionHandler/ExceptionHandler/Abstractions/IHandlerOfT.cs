@@ -6,6 +6,6 @@ namespace ExceptionHandler.Abstractions
 {
     public interface IHandler<in TException>
     {
-        Task<Response> HandleAsync(HttpContext context, TException exception);
+        Task<Response> HandleAsync(HttpContext context, TException exception, IServiceProvider serviceProvider);
     }
 }

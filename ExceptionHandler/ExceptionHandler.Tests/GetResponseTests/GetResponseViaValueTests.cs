@@ -20,7 +20,7 @@ namespace ExceptionHandler.Tests
 
             ApplicationBuilder.UseExceptionMiddleware().Catch<FileNotFoundException>().AndReturnAsync(statusCode);
 
-            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new FileNotFoundException(message));
+            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new FileNotFoundException(message), null);
 
             result.StatusCode.Should().BeEquivalentTo(statusCode);
             result.Message.Should().BeEquivalentTo(string.Empty);
@@ -34,7 +34,7 @@ namespace ExceptionHandler.Tests
 
             ApplicationBuilder.UseExceptionMiddleware().Catch<DirectoryNotFoundException>().AndReturnAsync(statusCode, message);
 
-            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new DirectoryNotFoundException(message));
+            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new DirectoryNotFoundException(message), null);
 
             result.StatusCode.Should().BeEquivalentTo(statusCode);
             result.Message.Should().BeEquivalentTo(message);
