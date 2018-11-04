@@ -18,7 +18,7 @@ namespace ExceptionHandler.Tests
             const string message = nameof(GetReponseWithStatusCodeTests);
             const HttpStatusCode statusCode = HttpStatusCode.Conflict;
 
-            ApplicationBuilder.RegisterExceptionHandler().Catch<FileNotFoundException>().AndReturnAsync(statusCode);
+            ApplicationBuilder.UseExceptionMiddleware().Catch<FileNotFoundException>().AndReturnAsync(statusCode);
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new FileNotFoundException(message));
 
@@ -32,7 +32,7 @@ namespace ExceptionHandler.Tests
             const string message = nameof(GetReponseWithStatusCodeTests);
             const HttpStatusCode statusCode = HttpStatusCode.Conflict;
 
-            ApplicationBuilder.RegisterExceptionHandler().Catch<DirectoryNotFoundException>().AndReturnAsync(statusCode, message);
+            ApplicationBuilder.UseExceptionMiddleware().Catch<DirectoryNotFoundException>().AndReturnAsync(statusCode, message);
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new DirectoryNotFoundException(message));
 

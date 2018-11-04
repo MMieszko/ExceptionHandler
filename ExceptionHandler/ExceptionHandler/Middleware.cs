@@ -23,8 +23,7 @@ namespace ExceptionHandler
             }
             catch (Exception ex)
             {
-                var response = await Container.GetResponseAsync(context, ex);
-                await this.WriteResponseAsync(response);
+                await this.WriteResponseAsync(await GetResponse(ex));
             }
         }
 
@@ -32,6 +31,11 @@ namespace ExceptionHandler
         {
             HttpContext.Response.StatusCode = (int)response.StatusCode;
             await HttpContext.Response.WriteAsync(response.Message);
+        }
+
+        protected virtual async Task<Response> GetResponse(Exception ex)
+        {
+            return await Container.GetResponseAsync(HttpContext, (dynamic)ex);
         }
     }
 }

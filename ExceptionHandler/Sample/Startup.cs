@@ -41,14 +41,17 @@ namespace Sample
                 app.UseHsts();
             }
 
-            app.RegisterExceptionHandler().Catch<InvalidAsynchronousStateException>()
-                                          .AndReturnAsync((context, exception) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
+            app.UseExceptionMiddleware().Catch<InvalidAsynchronousStateException>()
+                                        .AndReturnAsync((context, exception) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
                                    
-                                          .Catch<FileNotFoundException>()
-                                          .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")
+                                        .Catch<FileNotFoundException>()
+                                        .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")
                                       
-                                          .Catch<IndexOutOfRangeException>()
-                                          .AndCall<IndexOutOfRangeExceptionHandler>();
+                                        .Catch<IndexOutOfRangeException>()
+                                        .AndCall<IndexOutOfRangeExceptionHandler>()
+                
+                                        .CatchDefault()
+                                        .AndCall(() => new DefaultExceptionHandler());
 
             app.UseHttpsRedirection();
             app.UseMvc();

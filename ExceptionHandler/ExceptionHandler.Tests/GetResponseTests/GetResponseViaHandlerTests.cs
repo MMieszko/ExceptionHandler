@@ -18,7 +18,7 @@ namespace ExceptionHandler.Tests
         [Fact]
         public async Task CanGetResponseViaHandlerCreatedByReflection()
         {
-            ApplicationBuilder.RegisterExceptionHandler().Catch<InvalidCastException>().AndCall<InvalidCastExceptionHandler>();
+            ApplicationBuilder.UseExceptionMiddleware().Catch<InvalidCastException>().AndCall<InvalidCastExceptionHandler>();
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new InvalidCastException());
 
@@ -28,7 +28,7 @@ namespace ExceptionHandler.Tests
         [Fact]
         public async Task GetReseponseViaHandlerCreatedByDelegate()
         {
-            ApplicationBuilder.RegisterExceptionHandler().Catch<IndexOutOfRangeException>().AndCall(() => new IndexOutOfRangeExceptionHandler());
+            ApplicationBuilder.UseExceptionMiddleware().Catch<IndexOutOfRangeException>().AndCall(() => new IndexOutOfRangeExceptionHandler());
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new IndexOutOfRangeException());
 
@@ -40,7 +40,7 @@ namespace ExceptionHandler.Tests
         {
             const string message = "Test";
 
-            ApplicationBuilder.RegisterExceptionHandler().Catch<DivideByZeroException>().AndCall(new DivideByZeroExceptionHandler());
+            ApplicationBuilder.UseExceptionMiddleware().Catch<DivideByZeroException>().AndCall(new DivideByZeroExceptionHandler());
 
             var result = await Container.GetResponseAsync(new DefaultHttpContext(), new DivideByZeroException(message));
 

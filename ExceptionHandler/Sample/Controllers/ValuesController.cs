@@ -12,12 +12,6 @@ namespace Sample.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)
         {
@@ -27,8 +21,10 @@ namespace Sample.Controllers
                     throw new InvalidAsynchronousStateException("Delegate exception");
                 case int value when value > 100 && value < 200:
                     throw new FileNotFoundException("File exception");
-                default:
+                case int value when value > 200 && value < 300:
                     throw new IndexOutOfRangeException();
+                default:
+                    throw new Exception("Default one");
             }
         }
     }

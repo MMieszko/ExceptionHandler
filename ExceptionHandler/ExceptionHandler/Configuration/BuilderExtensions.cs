@@ -1,20 +1,22 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using ExceptionHandler.Abstractions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 
 namespace ExceptionHandler.Configuration
 {
     public static class BuilderExtensions
     {
-        public static IApplicationBuilder RegisterExceptionHandler(this IApplicationBuilder @this)
+        public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder @this)
         {
             @this.UseMiddleware<Middleware>();
+
+            return @this;
+        }
+
+        public static IApplicationBuilder UseExceptionMiddleware<TMiddleware>(this IApplicationBuilder @this)
+            where TMiddleware : Middleware
+        {
+            @this.UseMiddleware<TMiddleware>();
 
             return @this;
         }
@@ -23,6 +25,11 @@ namespace ExceptionHandler.Configuration
             where TException : Exception
         {
             return new Builder<TException>(@this);
+        }
+
+        public static IBuilder<Exception> CatchDefault(this IApplicationBuilder @this)
+        {
+            return new Builder<Exception>(@this);
         }
     }
 }
