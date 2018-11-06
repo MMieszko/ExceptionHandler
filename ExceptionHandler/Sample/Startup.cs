@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.ExceptionHandlers;
+using Sample.Middlewares;
 using Sample.Services;
 
 namespace Sample
@@ -43,20 +44,42 @@ namespace Sample
                 app.UseHsts();
             }
 
-            app.UseExceptionMiddleware().Catch<InvalidAsynchronousStateException>()
-                                        .AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
-                                   
-                                        .Catch<FileNotFoundException>()
-                                        .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")
-                                      
-                                        .Catch<IndexOutOfRangeException>()
-                                        .AndCall<IndexOutOfRangeExceptionHandler>()
-                
-                                        .CatchDefault()
-                                        .AndCall(() => new DefaultExceptionHandler());
+            //UseBuiltInMiddleware(app);
+            UseCustomInMiddleware(app);
 
             app.UseHttpsRedirection();
             app.UseMvc();
+        }
+
+        private void UseBuiltInMiddleware(IApplicationBuilder app)
+        {
+            app.UseExceptionMiddleware()
+                
+                .Catch<InvalidAsynchronousStateException>()
+                .AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
+
+                .Catch<FileNotFoundException>()
+                .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")
+
+                .Catch<IndexOutOfRangeException>()
+                .AndCall<IndexOutOfRangeExceptionHandler>()
+
+                .CatchDefault()
+                .AndCall(() => new DefaultExceptionHandler());
+        }
+
+        private void UseCustomInMiddleware(IApplicationBuilder app)
+        {
+            app.UseExceptionMiddleware<ExceptionMiddleware>()
+
+                .Catch<InvalidAsynchronousStateException>()
+                .AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(HttpStatusCode.AlreadyReported, $"The path {context.Request.Path} failed with {exception.Message}")))
+
+                .Catch<FileNotFoundException>()
+                .AndReturnAsync(HttpStatusCode.NotFound, "There was error with retriving file. Please try again later")
+
+                .Catch<IndexOutOfRangeException>()
+                .AndCall<IndexOutOfRangeExceptionHandler>();
         }
     }
 }

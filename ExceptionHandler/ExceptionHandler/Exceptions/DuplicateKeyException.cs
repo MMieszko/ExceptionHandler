@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ExceptionHandler
+namespace ExceptionHandler.Exceptions
 {
     public class DuplicateKeyException : Exception
     {

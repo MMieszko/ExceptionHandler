@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -15,7 +16,7 @@ namespace ExceptionHandler
             Next = next;
         }
 
-        public virtual async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
+        public async Task Invoke(HttpContext context, IServiceProvider serviceProvider)
         {
             try
             {
@@ -25,7 +26,7 @@ namespace ExceptionHandler
             }
             catch (Exception ex)
             {
-                await this.WriteResponseAsync(await GetResponse(ex));
+                await this.WriteResponseAsync(await CreateResponseAsync(ex));
             }
         }
 
@@ -35,7 +36,7 @@ namespace ExceptionHandler
             await HttpContext.Response.WriteAsync(response.Message);
         }
 
-        protected virtual async Task<Response> GetResponse(Exception ex)
+        protected virtual async Task<Response> CreateResponseAsync(Exception ex)
         {
             return await Container.GetResponseAsync(HttpContext, (dynamic)ex, ServiceProvider);
         }

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using ExceptionHandler.Abstractions;
+using ExceptionHandler.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace ExceptionHandler
 {
-    public static class Container
+    internal static class Container
     {
         private static readonly Dictionary<Type, Delegate> Dictionary;
 
@@ -20,9 +21,7 @@ namespace ExceptionHandler
             where TException : Exception
         {
             if (Dictionary.ContainsKey(typeof(TException)))
-            {
                 throw new DuplicateKeyException($"The exception -  {typeof(TException).FullName} is already catched.");
-            }
 
             Dictionary.Add(typeof(TException), @delegate);
         }
@@ -34,7 +33,7 @@ namespace ExceptionHandler
                 return new Response(HttpStatusCode.InternalServerError, exception.Message);
 
             var @delegate = Dictionary[exception.GetType()];
-            
+
             switch (@delegate.Method.ReturnType)
             {
                 case Type type when type == typeof(IHandler<TException>):

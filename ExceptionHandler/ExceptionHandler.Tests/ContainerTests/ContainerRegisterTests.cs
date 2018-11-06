@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Net;
 using ExceptionHandler.Configuration;
+using ExceptionHandler.Exceptions;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Builder.Internal;
