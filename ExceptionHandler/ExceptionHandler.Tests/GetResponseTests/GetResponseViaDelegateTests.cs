@@ -23,5 +23,19 @@ namespace ExceptionHandler.Tests.GetResponseTests
             result.StatusCode.Should().BeEquivalentTo(statusCode);
             result.Message.Should().BeEquivalentTo(message);
         }
+
+        [Fact]
+        public async Task CanGetResponseViaHandlerCreatedByReflectionWithCustomMiddleware()
+        {
+            const string message = nameof(CanGetResponseViaHandlerCreatedByReflection);
+            const HttpStatusCode statusCode = HttpStatusCode.Ambiguous;
+
+            ApplicationBuilder.UseExceptionMiddleware<CustomMiddleware>().Catch<OutOfMemoryException>().AndReturnAsync((context, exception, serviceProvider) => Task.FromResult(new Response(statusCode, message)));
+
+            var result = await Container.GetResponseAsync(new DefaultHttpContext(), new OutOfMemoryException(message), null);
+
+            result.StatusCode.Should().BeEquivalentTo(statusCode);
+            result.Message.Should().BeEquivalentTo(message);
+        }
     }
 }
