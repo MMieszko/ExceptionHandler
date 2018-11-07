@@ -1,14 +1,12 @@
 ﻿using System.IO;
-using ExceptionHandler.Abstractions;
-using ExceptionHandler.Configuration;
-using ExceptionHandler.Tests.GetResponseTests;
 using System.Net;
 using System.Threading.Tasks;
+using ExceptionHandler.Configuration;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Xunit;
 
-namespace ExceptionHandler.Tests
+namespace ExceptionHandler.Tests.GetResponseTests
 {
     public class GetResponseViaValueTests : GetResponseTest
     {

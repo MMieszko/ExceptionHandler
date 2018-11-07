@@ -12,7 +12,7 @@ namespace Sample.ExceptionHandlers
     {
         public async Task<Response> HandleAsync(HttpContext context, IndexOutOfRangeException exception, IServiceProvider serviceProvider)
         {
-            var message = $"{context.Request.Path} failed with {exception.GetType().FullName}. Catched by {nameof(IndexOutOfRangeExceptionHandler)}";
+            var message = $"{context.Request.Path} failed with {exception.GetType().FullName}. Catch by {nameof(IndexOutOfRangeExceptionHandler)}";
 
             await ((LoggerService) serviceProvider.GetService(typeof(LoggerService))).LogAsync(message);
 
